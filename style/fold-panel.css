@@ -1,5 +1,6 @@
 .container > .fold-panel {
   position: absolute;
+  z-index: -1;
   top: 0;
   left: 0;
 
@@ -19,6 +20,7 @@
     height: 100%;
 
     cursor: pointer;
+    transition: all 0.3s;
 
     border-right: 0.2vw solid #000;
     border-left: 0.2vw solid #000;
@@ -33,6 +35,12 @@
       border-right: 0;
     }
   }
+
+  > li:hover {
+    flex: 8;
+
+    background-position: center;
+  }
 }
 
 @keyframes fold-panel-fade-in {
@@ -40,6 +48,8 @@
     width: 40%;
   }
   100% {
+    z-index: unset;
+
     opacity: 1;
   }
 }
