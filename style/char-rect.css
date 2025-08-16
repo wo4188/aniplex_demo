@@ -181,7 +181,7 @@
     transform: translateX(calc(40vw * 0.33)) rotateY(135deg) scale(1.2);
   }
   66% {
-    transform: translateX(calc(40vw * 0.66)) rotateY(45deg) scale(1.2);
+    transform: translateX(calc(40vw * 0.66)) rotateY(45deg) scale(1.6);
   }
   95% {
     transform: translateX(calc(40vw * 0.95)) rotateY(135deg) scale(1.2);

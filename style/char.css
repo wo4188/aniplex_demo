@@ -6,10 +6,18 @@
   align-items: center;
   justify-content: center;
 
+  animation: aniplex-fade-out 2s ease-out forwards;
+  animation-delay: 2.4s;
   text-align: center;
   pointer-events: none;
 
   perspective: 450px;
+}
+
+@keyframes aniplex-fade-out {
+  to {
+    opacity: 0;
+  }
 }
 
 .container .char-block > .char {
