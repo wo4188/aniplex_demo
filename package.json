@@ -1,0 +1,19 @@
+{
+  "name": "aniplex_demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "postcss": "postcss ./style/index.css -o ./dist/style.css -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "cssnano": "^7.1.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "postcss-import": "^16.1.1",
+    "postcss-preset-env": "^10.2.4"
+  }
+}
