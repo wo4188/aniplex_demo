@@ -1,6 +1,5 @@
 .container > .fold-panel {
   position: absolute;
-  z-index: -1;
   top: 0;
   left: 0;
 
@@ -17,6 +16,7 @@
   > li {
     flex: 1;
 
+    width: 0;
     height: 100%;
 
     cursor: pointer;
@@ -25,7 +25,7 @@
     border-right: 0.2vw solid #000;
     border-left: 0.2vw solid #000;
     background-repeat: no-repeat;
-    background-position: 24% center;
+    background-position: 28% center;
     background-size: auto 100%;
 
     &:nth-child(1) {
@@ -37,7 +37,7 @@
   }
 
   > li:hover {
-    flex: 8;
+    flex: 10;
 
     background-position: center;
   }
@@ -48,8 +48,6 @@
     width: 40%;
   }
   100% {
-    z-index: unset;
-
     opacity: 1;
   }
 }
