@@ -1,6 +1,8 @@
 import { createApp, ref } from 'vue';
 import { personArr } from './data.js';
 
+import 'simplebar';
+
 const app = createApp({
   setup() {
     const foldList = ref(personArr());

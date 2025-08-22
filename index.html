@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css" />
     <link rel="stylesheet" href="dist/style.css" />
     <script type="importmap">
       {
         "imports": {
-          "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+          "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+          "simplebar": "https://unpkg.com/simplebar@latest/dist/simplebar.min.js"
         }
       }
     </script>
@@ -54,6 +56,14 @@
                   @click="switchAudioEnabled"
                 />
                 <img v-else class="audio-pic" src="img/语音.png" @click="switchAudioEnabled" />
+              </div>
+              <div class="intro-box">
+                <div
+                  class="intro-content"
+                  data-simplebar
+                  data-simplebar-auto-hide="false"
+                  v-html="it.introHtml"
+                ></div>
               </div>
             </div>
           </li>

@@ -100,5 +100,63 @@
         }
       }
     }
+
+    .intro-box {
+      position: relative;
+
+      display: flex;
+
+      width: 28vw;
+      min-height: calc(1.5vw + 20px);
+      max-height: calc(7.5vw + 20px);
+      margin-top: 1vw;
+      padding: 10px 5px 10px 15px;
+
+      color: #fff;
+      background: rgba(1, 1, 1, 0.5);
+
+      font-size: 1vw;
+      line-height: 1.5vw;
+
+      &::before {
+        display: block;
+        flex: none;
+
+        width: 1.1vw;
+        height: 1.1vw;
+        margin-top: 4px;
+        margin-right: 1.25vw;
+
+        content: "";
+
+        background: url("/img/point.png") center no-repeat;
+        background-size: 100%;
+      }
+
+      .intro-content {
+        flex: 1;
+
+        padding-right: 1vw;
+      }
+    }
+  }
+}
+
+.simplebar-track.simplebar-vertical {
+  width: 4px;
+
+  border-radius: 6px;
+  background: rgba(74, 60, 50, 0.2);
+
+  .simplebar-scrollbar::before {
+    width: 4px;
+    margin: 0 auto;
+
+    opacity: 0.75;
+    border-radius: 6px;
+    background: #f5f0e4;
+    box-shadow: 0px 2px 2px 0px rgba(51, 51, 51, 0.06);
+
+    inset: 0;
   }
 }

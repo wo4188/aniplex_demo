@@ -5,12 +5,13 @@
   align-items: center;
   justify-content: center;
 
+  user-select: none;
   animation: aniplex-fade-out 2s ease-out forwards;
   animation-delay: 2.4s;
   text-align: center;
   pointer-events: none;
 
-  perspective: 450px;
+  perspective: 23.4375vw;
 }
 
 @keyframes aniplex-fade-out {
