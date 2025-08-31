@@ -1,25 +1,68 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-
-  font-family: "monospace", "sans-serif";
-}
-
-ol,
-ul {
-  list-style: none;
-}
-
 .container {
-  position: relative;
-
   display: flex;
   align-items: center;
+  flex-flow: column;
   justify-content: center;
 
   width: 100vw;
   height: 100vh;
 
-  background: #000;
+  .signature-canvas {
+    border: 1px solid red;
+    border-radius: 8px;
+  }
+
+  .btn-group {
+    display: flex;
+
+    margin-top: 20px;
+
+    .btn {
+      position: relative;
+      z-index: 0;
+
+      overflow: hidden;
+
+      padding: 6px 14px;
+
+      cursor: pointer;
+
+      color: #fff;
+      border-radius: 6px;
+
+      & + .btn {
+        margin-left: 40px;
+      }
+
+      &::before {
+        position: absolute;
+        z-index: -1; /* 设置z-index 父子堆叠顺序 */
+
+        display: block;
+
+        content: "";
+
+        opacity: 0;
+        background-color: #000;
+
+        inset: 0;
+      }
+      &:active {
+        &::before {
+          opacity: var(--active-opacity);
+        }
+      }
+    }
+
+    .save-btn {
+      background-color: #f56c6c;
+    }
+
+    .reset-btn {
+      background-color: #67c23a;
+    }
+  }
+
+  .export-pic {
+  }
 }

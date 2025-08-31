@@ -1,6 +1,3 @@
-@import './var.css';
-@import './main.css';
-@import './char.css';
-@import './char-rect.css';
-@import './fold-panel.css';
-@import './fold-panel-item.css';
+@import "./reset.css";
+@import "./var.css";
+@import "./main.css";
