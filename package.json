@@ -1,7 +1,8 @@
 {
   "name": "aniplex_demo",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,9 +13,13 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/node": "^24.3.0",
     "cssnano": "^7.1.0",
     "postcss-import": "^16.1.1",
+    "postcss-load-config": "^6.0.1",
     "postcss-preset-env": "^10.2.4",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
     "vite": "^7.1.3"
   }
 }

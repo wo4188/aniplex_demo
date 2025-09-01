@@ -5,6 +5,11 @@ import { defineConfig } from 'vite';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
   server: {
     open: '/e-signature.html',
     host: '0.0.0.0',
@@ -13,5 +18,6 @@ export default defineConfig({
     rollupOptions: {
       input: resolve(__dirname, 'e-signature.html'),
     },
+    // cssMinify: false,
   },
 });
