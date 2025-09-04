@@ -11,12 +11,12 @@ export default defineConfig({
     },
   },
   server: {
-    open: '/e-signature.html',
+    // open: '/e-signature.html',
     host: '0.0.0.0',
   },
   build: {
     rollupOptions: {
-      input: resolve(__dirname, 'e-signature.html'),
+      // input: resolve(__dirname, 'e-signature.html'),
     },
     // cssMinify: false,
   },
