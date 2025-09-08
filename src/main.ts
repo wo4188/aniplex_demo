@@ -1,14 +1,14 @@
 import './styles/index.css';
 
-import { Signature } from './utils';
+import { Signature, isTouchDevice } from './utils';
 
-console.log('hello');
+console.log('hello 判断为触摸设备', isTouchDevice());
 
 const canvasEl: HTMLCanvasElement | null = document.querySelector('.signature-canvas');
 const saveBtnEl = document.querySelector('.save-btn');
 const resetBtnEl = document.querySelector('.reset-btn');
 
-const signature = new Signature(canvasEl!);
+const signature = new Signature(canvasEl!, isTouchDevice());
 
 saveBtnEl?.addEventListener('click', doSave);
 resetBtnEl?.addEventListener('click', doReset);
