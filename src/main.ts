@@ -9,14 +9,17 @@ const canvasEl: HTMLCanvasElement = document.querySelector('.signature-canvas')!
 const saveBtnEl = document.querySelector('.save-btn')!;
 const resetBtnEl = document.querySelector('.reset-btn')!;
 
+const { clientWidth, clientHeight } = canvasEl.parentElement!;
+canvasEl.width = clientWidth;
+canvasEl.height = clientHeight;
 const signature = new Signature(canvasEl, isTouchDevice());
 
 saveBtnEl.addEventListener('click', doSave);
 resetBtnEl.addEventListener('click', doReset);
 
-const sizePickerEl = document.querySelector('#size-picker')! as HTMLInputElement;
-const colorPickerEl = document.querySelector('#color-picker')! as HTMLInputElement;
-const bgColorPickerEl = document.querySelector('#bg-color-picker')! as HTMLInputElement;
+const sizePickerEl: HTMLInputElement = document.querySelector('#size-picker')!;
+const colorPickerEl: HTMLInputElement = document.querySelector('#color-picker')!;
+const bgColorPickerEl: HTMLInputElement = document.querySelector('#bg-color-picker')!;
 const { unbind: unbindPickers } = bindStylePickers(signature, {
   sizeEl: sizePickerEl,
   colorEl: colorPickerEl,
