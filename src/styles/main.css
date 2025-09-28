@@ -60,6 +60,7 @@
 
         inset: 0;
       }
+
       &:active {
         &::before {
           opacity: var(--active-opacity);

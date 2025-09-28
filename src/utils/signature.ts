@@ -54,6 +54,7 @@ class MouseInputStrategy implements InputStrategy {
       this.#signature.canvas.addEventListener(event, handler);
     }
   };
+
   destroy = () => {
     for (const [event, handler] of this.#eventMap) {
       this.#signature.canvas.removeEventListener(event, handler);
@@ -105,6 +106,7 @@ class TouchInputStrategy implements InputStrategy {
       this.#signature.canvas.addEventListener(event, handler);
     }
   };
+
   destroy = () => {
     for (const [event, handler] of this.#eventMap) {
       this.#signature.canvas.removeEventListener(event, handler);
@@ -180,6 +182,17 @@ export class Signature {
   drawLine = () => {
     this.ctx.lineTo(this.#x, this.#y);
     this.ctx.stroke();
+  };
+
+  resize = (w: number, h: number) => {
+    const dpr = devicePixelRatio;
+
+    this.canvas.width = w * dpr;
+    this.canvas.height = h * dpr;
+    this.canvas.style.width = `${w}px`;
+    this.canvas.style.height = `${h}px`;
+
+    this.ctx.scale(dpr, dpr);
   };
 
   init = () => {
