@@ -29,11 +29,12 @@ class MouseInputStrategy implements InputStrategy {
 
   #getPos = (e: Event) => {
     const _e = e as MouseEvent;
-    const rect = this.#signature.canvas.getBoundingClientRect();
+    const { dpr, canvas } = this.#signature;
+    const rect = canvas.getBoundingClientRect();
 
     return {
-      x: _e.clientX - rect.x,
-      y: _e.clientY - rect.y,
+      x: (_e.clientX - rect.x) / dpr,
+      y: (_e.clientY - rect.y) / dpr,
     };
   };
 
@@ -81,11 +82,12 @@ class TouchInputStrategy implements InputStrategy {
 
   #getPos = (e: Event) => {
     const _e = e as TouchEvent;
-    const rect = this.#signature.canvas.getBoundingClientRect();
+    const { dpr, canvas } = this.#signature;
+    const rect = canvas.getBoundingClientRect();
 
     return {
-      x: _e.touches[0].clientX - rect.x,
-      y: _e.touches[0].clientY - rect.y,
+      x: (_e.touches[0].clientX - rect.x) / dpr,
+      y: (_e.touches[0].clientY - rect.y) / dpr,
     };
   };
 
@@ -115,8 +117,11 @@ class TouchInputStrategy implements InputStrategy {
 }
 
 export class Signature {
-  readonly canvas;
-  readonly ctx;
+  container: HTMLElement;
+  canvas: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D;
+
+  dpr: number;
   isDrawing = false;
   #x = 0;
   #y = 0;
@@ -124,13 +129,17 @@ export class Signature {
   #strategy: InputStrategy;
 
   constructor(canvas: HTMLCanvasElement, isTouchDevice: boolean) {
-    const ctx = canvas?.getContext('2d');
+    const ctx = canvas?.getContext('2d', { willReadFrequently: true });
 
     if (!canvas) throw new Error('canvas 画布元素不能为空');
     if (!ctx) throw new Error('无法获取该元素的 2D 渲染上下文');
 
+    this.container = canvas.parentElement!;
     this.canvas = canvas;
+    this.canvas.width = this.container.clientWidth * devicePixelRatio;
+    this.canvas.height = this.container.clientHeight * devicePixelRatio;
     this.ctx = ctx;
+    this.dpr = devicePixelRatio || 1;
 
     if (isTouchDevice) {
       this.#strategy = new TouchInputStrategy(this);
@@ -138,7 +147,7 @@ export class Signature {
       this.#strategy = new MouseInputStrategy(this);
     }
 
-    this.#initStyle();
+    // this.initStyle();
     this.init();
   }
 
@@ -166,17 +175,19 @@ export class Signature {
     }
   };
 
-  #initStyle = () => {
-    const { width, height } = this.canvas;
+  initStyle = () => {
+    const { dpr, container } = this;
+    const { clientWidth, clientHeight } = container;
 
     this.ctx.lineWidth = 4;
     this.ctx.strokeStyle = '#fff';
     this.ctx.fillStyle = '#000';
-    this.ctx.fillRect(0, 0, width, height);
+    this.ctx.fillRect(0, 0, clientWidth * dpr, clientHeight * dpr); // TODO  是覆盖上去的，而不是单独的背景图层
+    this.ctx.scale(dpr, dpr);
   };
 
-  setPos = (curX: number, curY: number) => {
-    [this.#x, this.#y] = [curX, curY];
+  setPos = (currX: number, currY: number) => {
+    [this.#x, this.#y] = [currX, currY];
   };
 
   drawLine = () => {
@@ -185,14 +196,16 @@ export class Signature {
   };
 
   resize = (w: number, h: number) => {
-    const dpr = devicePixelRatio;
+    const { dpr, ctx, canvas } = this;
 
-    this.canvas.width = w * dpr;
-    this.canvas.height = h * dpr;
-    this.canvas.style.width = `${w}px`;
-    this.canvas.style.height = `${h}px`;
+    const prevImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-    this.ctx.scale(dpr, dpr);
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+
+    ctx.scale(dpr, dpr);
+
+    ctx.putImageData(prevImageData, 0, 0); // TODO 尺寸改变后，重绘的内容 没有跟随缩放
   };
 
   init = () => {
@@ -204,9 +217,11 @@ export class Signature {
   };
 
   clear = () => {
-    const { width, height } = this.canvas;
-    this.ctx.clearRect(0, 0, width, height);
-    this.ctx.fillRect(0, 0, width, height);
+    const { ctx, canvas } = this;
+    const { width, height } = canvas;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillRect(0, 0, width, height);
   };
 
   setCtx = (

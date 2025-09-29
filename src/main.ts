@@ -10,30 +10,40 @@ import { bindStylePickers } from './bindStylePickers';
 console.log('hello 判断为触摸设备', isTouchDevice());
 
 const canvasEl: HTMLCanvasElement = document.querySelector('.signature-canvas')!;
-const saveBtnEl = document.querySelector('.save-btn')!;
-const resetBtnEl = document.querySelector('.reset-btn')!;
 const sizePickerEl: HTMLInputElement = document.querySelector('#size-picker')!;
 const colorPickerEl: HTMLInputElement = document.querySelector('#color-picker')!;
 const bgColorPickerEl: HTMLInputElement = document.querySelector('#bg-color-picker')!;
+const saveBtnEl = document.querySelector('.save-btn')!;
+const resetBtnEl = document.querySelector('.reset-btn')!;
 
 const signature = new Signature(canvasEl, isTouchDevice());
 
+const { rebind, unbind: unbindPickers } = bindStylePickers(signature, {
+  sizeEl: sizePickerEl,
+  colorEl: colorPickerEl,
+  bgColorEl: bgColorPickerEl,
+});
+
+let isFirst = true;
 const removeResizeOb = addResizeObserver(
   canvasEl.parentElement!,
   (boxSize) => {
     const { innerWidth, innerHeight } = boxSize;
+    console.log('🚀 ~ innerWidth, innerHeight 👉', innerWidth, innerHeight);
+
+    if (isFirst) {
+      signature.initStyle();
+      isFirst = false;
+
+      return;
+    }
     signature.resize(innerWidth, innerHeight);
+    rebind(); // TODO 先暂时重新绑定一下
   },
   {
     enableRAF: true,
   }
 );
-
-const { unbind: unbindPickers } = bindStylePickers(signature, {
-  sizeEl: sizePickerEl,
-  colorEl: colorPickerEl,
-  bgColorEl: bgColorPickerEl,
-});
 
 saveBtnEl.addEventListener('click', doSave);
 resetBtnEl.addEventListener('click', doReset);

@@ -28,8 +28,13 @@ export const bindStylePickers = (signature: Signature, pickerEls: PickerEls) => 
   function setBgColor() {
     signature.setCtx((ctx) => {
       const { width, height } = signature.canvas;
+
+      const imgData = ctx.getImageData(0, 0, width, height);
+
       ctx.fillStyle = bgColorEl.value;
       ctx.fillRect(0, 0, width, height);
+
+      ctx.putImageData(imgData, 0, 0);
     });
   }
 
@@ -52,6 +57,7 @@ export const bindStylePickers = (signature: Signature, pickerEls: PickerEls) => 
   bgColorEl.addEventListener('input', setBgColor);
 
   return {
+    rebind: bind,
     unbind, //
   };
 };
