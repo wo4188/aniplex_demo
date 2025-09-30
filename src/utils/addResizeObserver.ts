@@ -11,12 +11,24 @@ type EntryOpts = {
    * @default true
    */
   enableRAF?: boolean;
+
+  /**
+   * 允许通知 初次的尺寸变化
+   * @default false
+   */
+  allowFirstNotify?: boolean;
 };
 
 type EntryCtx = {
   notify: (boxSize: BoxSize) => void;
   opts: EntryOpts;
   rafId?: number;
+
+  /**
+   * 已观测过的标识
+   * @default false
+   */
+  _isObserved: boolean;
 };
 
 const map = new WeakMap<Element, EntryCtx>();
@@ -24,9 +36,21 @@ const map = new WeakMap<Element, EntryCtx>();
 const ob = new ResizeObserver((entries) => {
   for (const entry of entries) {
     const entryCtx = map.get(entry.target);
+
     if (!entryCtx) continue;
 
     const { notify, opts } = entryCtx;
+    const { enableRAF, allowFirstNotify } = opts;
+
+    // 人为控制是否要 向外通知 初次的尺寸变化
+    if (!allowFirstNotify && !entryCtx._isObserved) {
+      entryCtx._isObserved = true; // 标记 已观测
+      continue;
+    }
+
+    if (!entryCtx._isObserved) {
+      entryCtx._isObserved = true; // 标记 已观测
+    }
 
     const payload = {
       innerWidth: entry.contentBoxSize[0].inlineSize,
@@ -35,7 +59,7 @@ const ob = new ResizeObserver((entries) => {
       outerHeight: entry.borderBoxSize[0].blockSize,
     };
 
-    if (!opts.enableRAF) {
+    if (!enableRAF) {
       notify(payload);
       continue;
     }
@@ -58,10 +82,16 @@ export const addResizeObserver = (
 ) => {
   const _opts = {
     enableRAF: true, //
+    allowFirstNotify: false,
     ...opts,
   };
 
-  map.set(target, { notify, opts: _opts });
+  map.set(target, {
+    notify, //
+    opts: _opts,
+    _isObserved: false,
+  });
+
   ob.observe(target);
 
   return () => {

@@ -1,5 +1,7 @@
 import './styles/index.css';
 
+import { debounce } from 'lodash-es';
+
 import {
   Signature, //
   isTouchDevice,
@@ -24,25 +26,15 @@ const { rebind, unbind: unbindPickers } = bindStylePickers(signature, {
   bgColorEl: bgColorPickerEl,
 });
 
-let isFirst = true;
 const removeResizeOb = addResizeObserver(
   canvasEl.parentElement!,
-  (boxSize) => {
+  debounce((boxSize) => {
     const { innerWidth, innerHeight } = boxSize;
     console.log('🚀 ~ innerWidth, innerHeight 👉', innerWidth, innerHeight);
 
-    if (isFirst) {
-      signature.initStyle();
-      isFirst = false;
-
-      return;
-    }
     signature.resize(innerWidth, innerHeight);
     rebind(); // TODO 先暂时重新绑定一下
-  },
-  {
-    enableRAF: true,
-  }
+  }, 400)
 );
 
 saveBtnEl.addEventListener('click', doSave);

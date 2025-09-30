@@ -147,7 +147,7 @@ export class Signature {
       this.#strategy = new MouseInputStrategy(this);
     }
 
-    // this.initStyle();
+    this.#initStyle();
     this.init();
   }
 
@@ -175,7 +175,7 @@ export class Signature {
     }
   };
 
-  initStyle = () => {
+  #initStyle = () => {
     const { dpr, container } = this;
     const { clientWidth, clientHeight } = container;
 
