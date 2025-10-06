@@ -220,7 +220,7 @@ export class Signature {
 
     this.#adjustCanvas(cssW, cssH);
 
-    ctx.resetTransform();
+    // ctx.resetTransform();
     reload?.();
     this.clear();
 

@@ -4,17 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>电子签名板-原生实现</title>
-    <script type="module" crossorigin src="./assets/index-lg54J2gz.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Cx4m4kcO.css">
+    <script type="module" crossorigin src="./assets/index-D8lItDHa.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DcsnEcwB.css">
   </head>
   <body>
     <div class="container">
       <div class="menu-bar">
-        <input type="color" id="color-picker" value="#ffffff" />
+        <input type="color" id="color-picker" value="#ffff00" />
         <input type="color" id="bg-color-picker" value="#000000" />
         <input type="range" id="size-picker" min="1" max="10" value="4" />
       </div>
-      <canvas class="signature-canvas" width="600" height="400"></canvas>
+      <div class="canvas-box">
+        <canvas class="signature-canvas"></canvas>
+      </div>
       <div class="btn-group">
         <div class="btn save-btn">保存</div>
         <div class="btn reset-btn">重置</div>
