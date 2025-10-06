@@ -129,17 +129,15 @@ export class Signature {
   #strategy: InputStrategy;
 
   constructor(canvas: HTMLCanvasElement, isTouchDevice: boolean) {
-    const ctx = canvas?.getContext('2d', { willReadFrequently: true });
-
+    if (!canvas?.parentElement) throw new Error('canvas 的父元素不能为空');
     if (!canvas) throw new Error('canvas 画布元素不能为空');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) throw new Error('无法获取该元素的 2D 渲染上下文');
 
-    this.container = canvas.parentElement!;
+    this.dpr = window.devicePixelRatio || 1;
     this.canvas = canvas;
-    this.canvas.width = this.container.clientWidth * devicePixelRatio;
-    this.canvas.height = this.container.clientHeight * devicePixelRatio;
     this.ctx = ctx;
-    this.dpr = devicePixelRatio || 1;
+    this.container = canvas.parentElement;
 
     if (isTouchDevice) {
       this.#strategy = new TouchInputStrategy(this);
@@ -147,7 +145,9 @@ export class Signature {
       this.#strategy = new MouseInputStrategy(this);
     }
 
-    this.#initStyle();
+    const { clientWidth, clientHeight } = this.container;
+    this.#adjustCanvas(clientWidth, clientHeight);
+    this.#initDefaultStyle();
     this.init();
   }
 
@@ -175,15 +175,25 @@ export class Signature {
     }
   };
 
-  #initStyle = () => {
-    const { dpr, container } = this;
-    const { clientWidth, clientHeight } = container;
+  #adjustCanvas = (cssW: number, cssH: number) => {
+    // 计算物理像素尺寸(CSS像素 × 设备像素比)
+    this.canvas.width = cssW * this.dpr;
+    this.canvas.height = cssH * this.dpr;
 
+    // 统一设置坐标系的缩放转换
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+  };
+
+  #initDefaultStyle = () => {
+    const { clientWidth, clientHeight } = this.container;
+
+    // 设置初始样式
     this.ctx.lineWidth = 4;
     this.ctx.strokeStyle = '#fff';
     this.ctx.fillStyle = '#000';
-    this.ctx.fillRect(0, 0, clientWidth * dpr, clientHeight * dpr); // TODO  是覆盖上去的，而不是单独的背景图层
-    this.ctx.scale(dpr, dpr);
+
+    // 填充背景
+    this.ctx.fillRect(0, 0, clientWidth, clientHeight);
   };
 
   setPos = (currX: number, currY: number) => {
@@ -195,17 +205,34 @@ export class Signature {
     this.ctx.stroke();
   };
 
-  resize = (w: number, h: number) => {
-    const { dpr, ctx, canvas } = this;
+  resize = (cssW: number, cssH: number, reload?: () => void) => {
+    const { ctx, canvas, dpr } = this;
+    const { width, height } = canvas;
+    const physW = cssW * dpr;
+    const physH = cssH * dpr;
 
-    const prevImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const imgData = ctx.getImageData(0, 0, width, height);
 
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
+    const ratio = Math.min(
+      physW / width, // 新尺寸 : 原尺寸
+      physH / height
+    );
 
-    ctx.scale(dpr, dpr);
+    this.#adjustCanvas(cssW, cssH);
 
-    ctx.putImageData(prevImageData, 0, 0); // TODO 尺寸改变后，重绘的内容 没有跟随缩放
+    ctx.resetTransform();
+    reload?.();
+    this.clear();
+
+    // const dx = (physW - width * ratio) / 2;
+    // const dy = (physH - height * ratio) / 2;
+    // ctx.setTransform(ratio, 0, 0, ratio, dx, dy);
+
+    // TODO
+    // 尺寸改变后，重绘的内容 没有自适应缩放，多次重绘后，部分内容可能丢失
+    // 考虑 单独的背景图层？手动存储/恢复绘制路径？
+    // drawImage/putImageData 选择？
+    ctx.putImageData(imgData, 0, 0);
   };
 
   init = () => {

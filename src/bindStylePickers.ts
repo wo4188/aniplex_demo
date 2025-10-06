@@ -27,37 +27,33 @@ export const bindStylePickers = (signature: Signature, pickerEls: PickerEls) => 
 
   function setBgColor() {
     signature.setCtx((ctx) => {
-      const { width, height } = signature.canvas;
-
-      const imgData = ctx.getImageData(0, 0, width, height);
-
       ctx.fillStyle = bgColorEl.value;
-      ctx.fillRect(0, 0, width, height);
-
-      ctx.putImageData(imgData, 0, 0);
     });
   }
 
-  function bind() {
+  function toBind() {
     setSize();
     setColor();
     setBgColor();
   }
 
-  function unbind() {
+  function toUnbind() {
     sizeEl.removeEventListener('input', setSize);
     colorEl.removeEventListener('input', setColor);
     bgColorEl.removeEventListener('input', setBgColor);
   }
 
-  bind();
-
   sizeEl.addEventListener('input', setSize);
   colorEl.addEventListener('input', setColor);
   bgColorEl.addEventListener('input', setBgColor);
 
-  return {
-    rebind: bind,
-    unbind, //
+  const controller = {
+    bind: () => {
+      toBind();
+      return controller; // 返回自身实现链式调用
+    },
+    unbind: toUnbind,
   };
+
+  return controller;
 };

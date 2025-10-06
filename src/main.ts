@@ -20,11 +20,18 @@ const resetBtnEl = document.querySelector('.reset-btn')!;
 
 const signature = new Signature(canvasEl, isTouchDevice());
 
-const { rebind, unbind: unbindPickers } = bindStylePickers(signature, {
+const { bind: bindPickers, unbind: unbindPickers } = bindStylePickers(signature, {
   sizeEl: sizePickerEl,
   colorEl: colorPickerEl,
   bgColorEl: bgColorPickerEl,
 });
+
+// 设置 初始的自定义画布样式
+signature.setCtx((ctx, { width, height }) => {
+  ctx.clearRect(0, 0, width, height);
+  bindPickers();
+  ctx.fillRect(0, 0, width, height);
+}); 
 
 const removeResizeOb = addResizeObserver(
   canvasEl.parentElement!,
@@ -32,8 +39,7 @@ const removeResizeOb = addResizeObserver(
     const { innerWidth, innerHeight } = boxSize;
     console.log('🚀 ~ innerWidth, innerHeight 👉', innerWidth, innerHeight);
 
-    signature.resize(innerWidth, innerHeight);
-    rebind(); // TODO 先暂时重新绑定一下
+    signature.resize(innerWidth, innerHeight, bindPickers);
   }, 400)
 );
 
