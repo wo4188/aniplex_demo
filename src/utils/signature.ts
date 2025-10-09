@@ -33,8 +33,8 @@ class MouseInputStrategy implements InputStrategy {
     const rect = canvas.getBoundingClientRect();
 
     return {
-      x: (_e.clientX - rect.x) / dpr,
-      y: (_e.clientY - rect.y) / dpr,
+      x: _e.clientX - rect.x,
+      y: _e.clientY - rect.y,
     };
   };
 
@@ -86,8 +86,8 @@ class TouchInputStrategy implements InputStrategy {
     const rect = canvas.getBoundingClientRect();
 
     return {
-      x: (_e.touches[0].clientX - rect.x) / dpr,
-      y: (_e.touches[0].clientY - rect.y) / dpr,
+      x: _e.touches[0].clientX - rect.x,
+      y: _e.touches[0].clientY - rect.y,
     };
   };
 
@@ -121,6 +121,9 @@ export class Signature {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
 
+  backupCanvas!: HTMLCanvasElement;
+  backupCtx!: CanvasRenderingContext2D;
+
   dpr: number;
   isDrawing = false;
   #x = 0;
@@ -139,6 +142,9 @@ export class Signature {
     this.ctx = ctx;
     this.container = canvas.parentElement;
 
+    this.backupCanvas = document.createElement('canvas');
+    this.backupCtx = this.backupCanvas.getContext('2d', { willReadFrequently: true })!;
+
     if (isTouchDevice) {
       this.#strategy = new TouchInputStrategy(this);
     } else {
@@ -147,6 +153,7 @@ export class Signature {
 
     const { clientWidth, clientHeight } = this.container;
     this.#adjustCanvas(clientWidth, clientHeight);
+    this.#adjustBackupCanvas(clientWidth, clientHeight);
     this.#initDefaultStyle();
     this.init();
   }
@@ -176,12 +183,20 @@ export class Signature {
   };
 
   #adjustCanvas = (cssW: number, cssH: number) => {
-    // 计算物理像素尺寸(CSS像素 × 设备像素比)
+    this.canvas.style.width = `${cssW}px`;
+    this.canvas.style.height = `${cssH}px`;
+
+    // 计算物理像素尺寸(CSS逻辑像素 × 设备像素比)
     this.canvas.width = cssW * this.dpr;
     this.canvas.height = cssH * this.dpr;
 
     // 统一设置坐标系的缩放转换
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+  };
+
+  #adjustBackupCanvas = (cssW: number, cssH: number) => {
+    this.backupCanvas.width = cssW * this.dpr;
+    this.backupCanvas.height = cssH * this.dpr;
   };
 
   #initDefaultStyle = () => {
@@ -208,31 +223,19 @@ export class Signature {
   resize = (cssW: number, cssH: number, reload?: () => void) => {
     const { ctx, canvas, dpr } = this;
     const { width, height } = canvas;
+    
     const physW = cssW * dpr;
     const physH = cssH * dpr;
 
-    const imgData = ctx.getImageData(0, 0, width, height);
-
-    const ratio = Math.min(
-      physW / width, // 新尺寸 : 原尺寸
-      physH / height
-    );
+    this.#adjustBackupCanvas(width, height);
+    this.backupCtx.drawImage(canvas, 0, 0);
 
     this.#adjustCanvas(cssW, cssH);
 
-    // ctx.resetTransform();
     reload?.();
     this.clear();
 
-    // const dx = (physW - width * ratio) / 2;
-    // const dy = (physH - height * ratio) / 2;
-    // ctx.setTransform(ratio, 0, 0, ratio, dx, dy);
-
-    // TODO
-    // 尺寸改变后，重绘的内容 没有自适应缩放，多次重绘后，部分内容可能丢失
-    // 考虑 单独的背景图层？手动存储/恢复绘制路径？
-    // drawImage/putImageData 选择？
-    ctx.putImageData(imgData, 0, 0);
+    ctx.drawImage(this.backupCanvas, 0, 0, physW, physH);
   };
 
   init = () => {

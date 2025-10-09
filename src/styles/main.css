@@ -16,14 +16,17 @@
   .canvas-box {
     overflow: hidden;
 
-    width: 80%;
-    max-width: 600px;
+    width: clamp(300px, 80%, 400px);
 
     border-radius: 10px;
     box-shadow: 2px 2px 6px #999;
 
     aspect-ratio: 4 / 3;
     touch-action: none;
+
+    @media (min-width: 768px) {
+      width: clamp(600px, 80%, 720px);
+    }
   }
 
   .btn-group {

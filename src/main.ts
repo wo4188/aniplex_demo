@@ -31,7 +31,7 @@ signature.setCtx((ctx, { width, height }) => {
   ctx.clearRect(0, 0, width, height);
   bindPickers();
   ctx.fillRect(0, 0, width, height);
-}); 
+});
 
 const removeResizeOb = addResizeObserver(
   canvasEl.parentElement!,
